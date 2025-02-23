@@ -1,3 +1,5 @@
+import { BudgetForm } from "./components/BudgetForm";
+
 export const App = () => {
   return (
     <>
@@ -8,7 +10,7 @@ export const App = () => {
       </header>
 
       <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-10">
-        <p>Form Here</p>
+        <BudgetForm />
       </div>
     </>
   );
