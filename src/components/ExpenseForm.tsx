@@ -2,7 +2,7 @@ import { categories } from "../data/categories";
 import DatePicker from "react-date-picker";
 import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { DraftExpense, Value } from "../types";
 import { ErrorMessage } from "./ErrorMessage";
 import { useBudget } from "../hooks/useBudget";
@@ -16,7 +16,17 @@ export const ExpenseForm = () => {
   });
 
   const [error, setError] = useState("");
-  const { dispatch } = useBudget();
+  const { state, dispatch } = useBudget();
+
+  useEffect(() => {
+    if (state.editingId) {
+      const editingExpense = state.expenses.filter(
+        (expense) => expense.id === state.editingId
+      )[0];
+
+      setExpense(editingExpense);
+    }
+  }, [state.editingId]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
@@ -39,8 +49,16 @@ export const ExpenseForm = () => {
       return;
     }
 
-    // Add new expense
-    dispatch({ type: "add-expense", payload: { expense } });
+    // Update or delete expense
+    if (state.editingId) {
+      dispatch({
+        type: "update-expense",
+        payload: { expense: { id: state.editingId, ...expense } },
+      });
+    } else {
+      // Add new expense
+      dispatch({ type: "add-expense", payload: { expense } });
+    }
 
     // Reset state
     setExpense({ amount: 0, expenseName: "", category: "", date: new Date() });
@@ -48,7 +66,7 @@ export const ExpenseForm = () => {
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
       <legend className="uppercase text-center font-black text-2xl border-b-4 py-2 border-blue-500 py-2">
-        New Expense
+        {state.editingId ? "Save Changes" : "New Expense"}
       </legend>
 
       {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -118,7 +136,7 @@ export const ExpenseForm = () => {
       <input
         type="submit"
         className="bg-blue-600 w-full p-2 text-white uppercase font-bold rounded-lg"
-        value={"Save"}
+        value={state.editingId ? "Save Changes" : "Add Expense"}
       />
     </form>
   );
