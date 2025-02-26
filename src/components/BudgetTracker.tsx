@@ -14,10 +14,10 @@ export const BudgetTracker = () => {
         <CircularProgressbar
           value={percentage}
           styles={buildStyles({
-            pathColor: "#3b82f6",
+            pathColor: percentage === 100 ? "#dc2626" : "#3b82f6",
             trailColor: "#f5f5f5",
             textSize: 8,
-            textColor: "#3b82f6",
+            textColor: percentage === 100 ? "#dc2626" : "#3b82f6",
           })}
           text={`${percentage}% Spent`}
         />
