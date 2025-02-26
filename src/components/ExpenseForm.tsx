@@ -16,7 +16,8 @@ export const ExpenseForm = () => {
   });
 
   const [error, setError] = useState("");
-  const { state, dispatch } = useBudget();
+  const [previousAmount, setPreviousAmount] = useState(0);
+  const { state, dispatch, remainingBudget } = useBudget();
 
   useEffect(() => {
     if (state.editingId) {
@@ -25,6 +26,7 @@ export const ExpenseForm = () => {
       )[0];
 
       setExpense(editingExpense);
+      setPreviousAmount(editingExpense.amount);
     }
   }, [state.editingId]);
 
@@ -49,6 +51,12 @@ export const ExpenseForm = () => {
       return;
     }
 
+    // Validate limit
+    if (expense.amount - previousAmount > remainingBudget) {
+      setError("Not available budget");
+      return;
+    }
+
     // Update or delete expense
     if (state.editingId) {
       dispatch({
@@ -62,6 +70,7 @@ export const ExpenseForm = () => {
 
     // Reset state
     setExpense({ amount: 0, expenseName: "", category: "", date: new Date() });
+    setPreviousAmount(0);
   };
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
