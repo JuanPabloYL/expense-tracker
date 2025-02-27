@@ -4,9 +4,10 @@ import { useBudget } from "./hooks/useBudget";
 import { BudgetTracker } from "./components/BudgetTracker";
 import ExpenseModal from "./components/ExpenseModal";
 import { ExpenseList } from "./components/ExpenseList";
+import { FilterByCategories } from "./components/FilterByCategories";
 
 export const App = () => {
-  const { state, dispatch } = useBudget();
+  const { state } = useBudget();
 
   useEffect(() => {
     localStorage.setItem("budget", state.budget.toString());
@@ -31,6 +32,7 @@ export const App = () => {
 
       {isValidBudget && (
         <main className="max-w-3xl mx-auto py-10">
+          <FilterByCategories />
           <ExpenseList />
           <ExpenseModal />
         </main>
